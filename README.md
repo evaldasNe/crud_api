@@ -13,11 +13,12 @@ git clone https://github.com/evaldasNe/crud_api.git
 ```sh 
 cd crud_api
 ```
-5. Modify database connection in main.go at line 19
+5. Import database structure from file ```db.sql``` to your local database
+6. Modify database connection in main.go at line 19
 ```go
 database.DB, err = sql.Open("mysql", "username:password@/db_name")
 ```
-6. 
+7. 
 ```sh 
 go run crud_api
 ```
