@@ -5,10 +5,19 @@ To get started
 ```sh
 cd $GOPATH/src
 ```
-3. ```sh git clone https://github.com/evaldasNe/crud_api.git```
-4. ```sh cd crud_api```
+3. 
+```sh 
+git clone https://github.com/evaldasNe/crud_api.git
+```
+4. 
+```sh 
+cd crud_api
+```
 5. Modify database connection in main.go at line 19
 ```go
 database.DB, err = sql.Open("mysql", "username:password@/db_name")
 ```
-6. ```sh go run crud_api```
+6. 
+```sh 
+go run crud_api
+```
