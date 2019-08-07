@@ -13,7 +13,11 @@ import (
 // GetBooks func will return all books
 // from database in JSON format
 func GetBooks(w http.ResponseWriter, r *http.Request) {
-	books := repository.GetAllBooks()
+	books, err := repository.GetAllBooks()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(books)
 }
@@ -77,7 +81,11 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	repository.DeleteBook(params["id"])
-	var books = repository.GetAllBooks()
+	books, err := repository.GetAllBooks()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(books)
 }
