@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/evaldasNe/crud_api/database"
 	"github.com/evaldasNe/crud_api/entity"
 )
@@ -83,8 +86,17 @@ func CreateBook(book entity.Book) error {
 func UpdateBook(book entity.Book) error {
 	db := database.DB
 	sqlStatement := `UPDATE books SET isbn = ?, title = ?, author = ? WHERE id = ?`
-	var err error
-	_, err = db.Exec(sqlStatement, book.Isbn, book.Title, book.Author, book.ID)
+	res, err := db.Exec(sqlStatement, book.Isbn, book.Title, book.Author, book.ID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("No changes was made")
+	}
 
 	return err
 }
@@ -94,7 +106,18 @@ func UpdateBook(book entity.Book) error {
 func DeleteBook(ID string) error {
 	db := database.DB
 	sqlStatement := `DELETE FROM books WHERE id = ?`
-	_, err := db.Exec(sqlStatement, ID)
+	res, err := db.Exec(sqlStatement, ID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("Book not found")
+	}
+	fmt.Println(rowsAffected)
 
 	return err
 }

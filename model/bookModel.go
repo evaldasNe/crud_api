@@ -32,7 +32,7 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if book.ID == "" {
-		http.Error(w, "Book NOT FOUND by this ID", http.StatusBadRequest)
+		http.Error(w, "Book not found by this ID", http.StatusBadRequest)
 		return
 	}
 
@@ -66,7 +66,7 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if book.ID == "" {
-		http.Error(w, "Book NOT FOUND by this ID", http.StatusBadRequest)
+		http.Error(w, "Book not found by this ID", http.StatusBadRequest)
 		return
 	}
 
@@ -83,7 +83,11 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 		book.Author = bookUpdates.Author
 	}
 
-	repository.UpdateBook(book)
+	err = repository.UpdateBook(book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(book)
 }
@@ -93,7 +97,11 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 // from database in JSON format
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	repository.DeleteBook(params["id"])
+	err := repository.DeleteBook(params["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	books, err := repository.GetAllBooks()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

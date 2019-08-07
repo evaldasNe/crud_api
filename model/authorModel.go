@@ -13,7 +13,11 @@ import (
 // GetAuthors func will return all authors
 // from database in JSON format
 func GetAuthors(w http.ResponseWriter, r *http.Request) {
-	authors := repository.GetAllAuthors()
+	authors, err := repository.GetAllAuthors()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(authors)
 }
@@ -28,9 +32,13 @@ func GetAuthor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	author := repository.GetAuthor(id)
+	author, err := repository.GetAuthor(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	if author.ID == 0 {
-		http.Error(w, "Author NOT FOUND by this ID", http.StatusBadRequest)
+		http.Error(w, "Author not found by this ID", http.StatusBadRequest)
 		return
 	}
 
@@ -43,8 +51,13 @@ func GetAuthor(w http.ResponseWriter, r *http.Request) {
 func CreateAuthor(w http.ResponseWriter, r *http.Request) {
 	var author entity.Author
 	_ = json.NewDecoder(r.Body).Decode(&author)
-	id := repository.CreateAuthor(author)
+	id, err := repository.CreateAuthor(author)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	author.ID = id
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(author)
 }
@@ -58,11 +71,16 @@ func UpdateAuthor(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	var auhtor = repository.GetAuthor(id) //get current author data
-	if auhtor.ID == 0 {
-		http.Error(w, "Author NOT FOUND by this ID", http.StatusBadRequest)
+	auhtor, err := repository.GetAuthor(id) //get current author data
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	if auhtor.ID == 0 {
+		http.Error(w, "Author not found by this ID", http.StatusBadRequest)
+		return
+	}
+
 	var authorUpdates entity.Author //get author updates
 	_ = json.NewDecoder(r.Body).Decode(&authorUpdates)
 
@@ -73,7 +91,11 @@ func UpdateAuthor(w http.ResponseWriter, r *http.Request) {
 		auhtor.Lastname = authorUpdates.Lastname
 	}
 
-	repository.UpdateAuthor(auhtor)
+	err = repository.UpdateAuthor(auhtor)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(auhtor)
 }
@@ -88,8 +110,17 @@ func DeleteAuthor(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	repository.DeleteAuthor(id)
-	var authors = repository.GetAllAuthors()
+	err = repository.DeleteAuthor(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	authors, err := repository.GetAllAuthors()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(authors)
 }

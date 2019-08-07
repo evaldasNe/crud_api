@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/evaldasNe/crud_api/database"
 	"github.com/evaldasNe/crud_api/entity"
 )
@@ -65,19 +67,18 @@ func GetAuthor(ID int) (entity.Author, error) {
 
 // CreateAuthor func will add new author in database
 // returns inserted author's ID (int64) and errors
-func CreateAuthor(author entity.Author) (int64, error) {
+func CreateAuthor(author entity.Author) (int, error) {
 	db := database.DB
-	var id int64
 	sqlStatement := `
 	INSERT INTO authors (firstname, lastname)
 	VALUES (?, ?)`
 	res, err := db.Exec(sqlStatement, author.Firstname, author.Lastname)
 	if err != nil {
-		return id, err
+		return 0, err
 	}
-	id, err = res.LastInsertId()
+	id, err := res.LastInsertId()
 
-	return id, err
+	return int(id), err
 }
 
 // UpdateAuthor func will update author data
@@ -87,8 +88,17 @@ func UpdateAuthor(author entity.Author) error {
 	sqlStatement := `
 	UPDATE authors SET firstname = ?, lastname = ? 
 	WHERE id = ?`
-	var err error
-	_, err = db.Exec(sqlStatement, author.Firstname, author.Lastname, author.ID)
+	res, err := db.Exec(sqlStatement, author.Firstname, author.Lastname, author.ID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("No changes was made")
+	}
 
 	return err
 }
@@ -98,7 +108,17 @@ func UpdateAuthor(author entity.Author) error {
 func DeleteAuthor(ID int) error {
 	db := database.DB
 	sqlStatement := `DELETE FROM authors WHERE id = ?`
-	_, err := db.Exec(sqlStatement, ID)
+	res, err := db.Exec(sqlStatement, ID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("Author not found")
+	}
 
 	return err
 }
