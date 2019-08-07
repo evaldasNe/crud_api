@@ -28,17 +28,17 @@ go run crud_api
 With this API you can create, read, update and delete two data tables (books and authors) in your database
 
 # Error Codes
-If something went wrong you will get ```400 Bad Request``` response status and error message.
+If something went wrong you will get `400 Bad Request` response status and error message.
 
 # Success Codes
-If you add new row to the table you will get ```201 Created`` response status.
-All other requests will give ```200 OK``` response status.
+If you add new row to the table you will get `201 Created` response status.
+All other requests will give `200 OK` response status.
 
-# ```POST``` Post author
+# `POST` Post author
 ```http://localhost:8000/api/authors```
 ## Headers
-```##Content-Type	application/json```
-## Body ### raw (application/json)
+## `Content-Type` ## `application/json`
+## Body ## ### raw (application/json) ###
 ```JSON
 {
 	"firstname":"John",
