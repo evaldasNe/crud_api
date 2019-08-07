@@ -37,7 +37,7 @@ All other requests will give `200 OK` response status.
 # `POST` Post author
 ```http://localhost:8000/api/authors```
 ## Headers
-`Content-Type application/json`
+`<p>Content-Type</p> application/json`
 ## Body 
 ###### raw (application/json)
 ```JSON
