@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/evaldasNe/crud_api/database"
 	"github.com/evaldasNe/crud_api/entity"
@@ -117,7 +116,6 @@ func DeleteBook(ID string) error {
 	if rowsAffected == 0 {
 		return errors.New("Book not found")
 	}
-	fmt.Println(rowsAffected)
 
 	return err
 }
