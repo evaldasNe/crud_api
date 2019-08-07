@@ -1,24 +1,21 @@
 package repository
 
 import (
-	"log"
-
-	"github.com/evaldasNe/rest_api/database"
-	"github.com/evaldasNe/rest_api/entity"
+	"github.com/evaldasNe/crud_api/database"
+	"github.com/evaldasNe/crud_api/entity"
 )
 
 // GetAllAuthors func will find all authors in database
-// and returns it
-func GetAllAuthors() []entity.Author {
+// and returns all authors and errors
+func GetAllAuthors() ([]entity.Author, error) {
 	//Init books var as a slice Book struct
 	var authors []entity.Author
-
 	db := database.DB
 
 	// Execute the query
 	rows, err := db.Query("SELECT * FROM authors")
 	if err != nil {
-		log.Fatal(err.Error())
+		return authors, err
 	}
 
 	defer rows.Close()
@@ -26,87 +23,82 @@ func GetAllAuthors() []entity.Author {
 	var author entity.Author
 	// Fetch rows
 	for rows.Next() {
-		// get RawBytes from data
 		err = rows.Scan(&author.ID, &author.Firstname, &author.Lastname)
 		if err != nil {
-			log.Fatal(err.Error())
+			return authors, err
 		}
 		authors = append(authors, author)
 	}
 	if err = rows.Err(); err != nil {
-		log.Fatal(err.Error())
+		return authors, err
 	}
 
-	return []entity.Author(authors)
+	return authors, err
 }
 
 // GetAuthor func will find author in database by id
-// and returns that author
-func GetAuthor(ID int) entity.Author {
+// and returns that author and errors
+func GetAuthor(ID int) (entity.Author, error) {
 	db := database.DB
+	var author entity.Author
 
 	// Execute the query
 	rows, err := db.Query("SELECT * FROM authors WHERE id = ?", ID)
 	if err != nil {
-		log.Fatal(err.Error())
+		return author, err
 	}
 
 	defer rows.Close()
 
-	var author entity.Author
-
 	for rows.Next() {
-		// get data
 		err = rows.Scan(&author.ID, &author.Firstname, &author.Lastname)
 		if err != nil {
-			log.Fatal(err.Error())
+			return author, err
 		}
 	}
 	if err = rows.Err(); err != nil {
-		log.Fatal(err.Error())
+		return author, err
 	}
 
-	return entity.Author(author)
+	return author, err
 }
 
 // CreateAuthor func will add new author in database
-// returns inserted author's ID (int)
-func CreateAuthor(author entity.Author) int {
+// returns inserted author's ID (int64) and errors
+func CreateAuthor(author entity.Author) (int64, error) {
 	db := database.DB
+	var id int64
 	sqlStatement := `
 	INSERT INTO authors (firstname, lastname)
 	VALUES (?, ?)`
 	res, err := db.Exec(sqlStatement, author.Firstname, author.Lastname)
 	if err != nil {
-		log.Fatal(err.Error())
+		return id, err
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	id, err = res.LastInsertId()
 
-	return int(id)
+	return id, err
 }
 
 // UpdateAuthor func will update author data
-func UpdateAuthor(author entity.Author) {
+// returns errors
+func UpdateAuthor(author entity.Author) error {
 	db := database.DB
 	sqlStatement := `
 	UPDATE authors SET firstname = ?, lastname = ? 
 	WHERE id = ?`
 	var err error
 	_, err = db.Exec(sqlStatement, author.Firstname, author.Lastname, author.ID)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+
+	return err
 }
 
 // DeleteAuthor func will delete author from database by ID
-func DeleteAuthor(ID int) {
+// returns errors
+func DeleteAuthor(ID int) error {
 	db := database.DB
 	sqlStatement := `DELETE FROM authors WHERE id = ?`
 	_, err := db.Exec(sqlStatement, ID)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+
+	return err
 }

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/evaldasNe/rest_api/entity"
-	"github.com/evaldasNe/rest_api/repository"
+	"github.com/evaldasNe/crud_api/entity"
+	"github.com/evaldasNe/crud_api/repository"
 	"github.com/gorilla/mux"
 	"github.com/rs/xid"
 )
@@ -26,7 +26,11 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 // by ID from database in JSON format
 func GetBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r) // Get params
-	book := repository.GetBook(params["id"])
+	book, err := repository.GetBook(params["id"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	if book.ID == "" {
 		http.Error(w, "Book NOT FOUND by this ID", http.StatusBadRequest)
 		return
@@ -42,7 +46,12 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	var book entity.Book
 	_ = json.NewDecoder(r.Body).Decode(&book)
 	book.ID = xid.New().String() // generate id
-	repository.CreateBook(book)
+	err := repository.CreateBook(book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(book)
 }
@@ -51,7 +60,11 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 // and returns that book's data in JSON format
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	var book = repository.GetBook(params["id"]) //get current book data
+	book, err := repository.GetBook(params["id"]) //get current book data
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	if book.ID == "" {
 		http.Error(w, "Book NOT FOUND by this ID", http.StatusBadRequest)
 		return

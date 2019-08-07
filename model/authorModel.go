@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/evaldasNe/rest_api/entity"
-	"github.com/evaldasNe/rest_api/repository"
+	"github.com/evaldasNe/crud_api/entity"
+	"github.com/evaldasNe/crud_api/repository"
 	"github.com/gorilla/mux"
 )
 

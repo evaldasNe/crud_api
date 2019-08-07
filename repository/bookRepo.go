@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"github.com/evaldasNe/rest_api/database"
-	"github.com/evaldasNe/rest_api/entity"
+	"github.com/evaldasNe/crud_api/database"
+	"github.com/evaldasNe/crud_api/entity"
 )
 
 // GetAllBooks func will find all books in database

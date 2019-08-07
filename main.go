@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/evaldasNe/rest_api/database"
-	"github.com/evaldasNe/rest_api/model"
+	"github.com/evaldasNe/crud_api/database"
+	"github.com/evaldasNe/crud_api/model"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
