@@ -1,28 +1,32 @@
 # CRUD API
 ## To get started
 1. Install golang if you haven't already https://golang.org/dl/
-2. Then move to `$GOPATH/src` 
+2. Then move to `go` workspace `$GOPATH/src` 
 ```sh
 cd $GOPATH/src
 ```
-3. 
+3. Clone project
 ```sh 
 git clone https://github.com/evaldasNe/crud_api.git
 ```
-4. 
+4. Move to project directory
 ```sh 
 cd crud_api
 ```
-5. Import database structure from file `db.sql` to your local database
-6. Modify database connection in `main.go` at line 19
+5. Import all packages this project use
+```sh
+go get
+```
+6. Import database structure from file `db.sql` to your local database
+7. Modify database connection in `main.go` at line 19
 ```go
 database.DB, err = sql.Open("mysql", "username:password@/db_name")
 ```
-7. 
+8. Run project
 ```sh 
 go run crud_api
 ```
-
+Project is runnig on `http://localhost:8000`
 
 # Introduction
 With this API you can create, read, update and delete two data tables (books and authors) in your database
